@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahul's Professional Nutrition Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🥗 PROFESSIONAL NUTRITION TRACKER</h1>
+            <p>100% Target Compliance | Google Sheets Integration | Smart Auto-Balancing</p>
+        </header>
+        
+        <section class="controls">
+            <div class="control-group">
+                <label>Date:</label>
+                <input type="date" id="date" />
+            </div>
+            <div class="control-group">
+                <label>Week:</label>
+                <select id="week">
+                    <option value="1-2">Week 1-2 (2200 cal)</option>
+                    <option value="3-4" selected>Week 3-4 (2350 cal)</option>
+                    <option value="5-6">Week 5-6 (2500 cal)</option>
+                </select>
+            </div>
+        </section>
+        
+        <section class="summary" id="summary">
+            <h2>Daily Summary</h2>
+            <div class="summary-grid">
+                <div class="metric">
+                    <span class="label">Protein</span>
+                    <span class="value" id="sum-p">0g</span>
+                    <span class="target">/ <span id="tgt-p">135g</span></span>
+                    <span class="status" id="st-p">⚪</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Carbs</span>
+                    <span class="value" id="sum-c">0g</span>
+                    <span class="target">/ <span id="tgt-c">325g</span></span>
+                    <span class="status" id="st-c">⚪</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Fats</span>
+                    <span class="value" id="sum-f">0g</span>
+                    <span class="target">/ <span id="tgt-f">58g</span></span>
+                    <span class="status" id="st-f">⚪</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Calories</span>
+                    <span class="value" id="sum-cal">0</span>
+                    <span class="target">/ <span id="tgt-cal">2350</span></span>
+                    <span class="status" id="st-cal">⚪</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ALL 10 MEALS -->
+        <div id="meals"></div>
+        
+        <button class="btn-save" id="btnSave">💾 SAVE TO GOOGLE SHEETS</button>
+    </div>
+    
+    <script src="food-database.js"></script>
+    <script src="calculator.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
