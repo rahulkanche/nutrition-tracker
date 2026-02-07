@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahul's Nutrition Tracker - Lean Muscle Building</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #2d5f3f 0%, #1a472a 100%);
+            color: white; 
+            padding: 30px; 
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        
+        .date-section {
+            padding: 20px;
+            background: #f5f5f5;
+            border-bottom: 3px solid #4caf50;
+        }
+        .date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .date-grid label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .date-grid input, .date-grid select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .summary {
+            padding: 20px;
+            background: #e8f5e9;
+        }
+        .summary h2 { margin-bottom: 15px; color: #2d5f3f; }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .summary-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        .summary-item .label { font-size: 0.9em; color: #666; }
+        .summary-item .value { font-size: 2em; font-weight: bold; color: #2d5f3f; margin: 5px 0; }
+        .summary-item .target { font-size: 0.9em; color: #999; }
+        
+        .meal {
+            margin: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .meal-header {
+            background: linear-gradient(135deg, #3d7f5f 0%, #2d5f3f 100%);
+            color: white;
+            padding: 15px 20px;
+        }
+        .meal-header h3 { font-size: 1.4em; margin-bottom: 5px; }
+        .meal-header .target { font-size: 0.95em; opacity: 0.9; }
+        
+        .meal-body { padding: 20px; background: #fafafa; }
+        
+        .item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        .item-label {
+            font-weight: bold;
+            color: #2d5f3f;
+            margin-bottom: 10px;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr;
+            gap: 10px;
+            align-items: center;
+        }
+        .item-row select {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .item-row .qty {
+            background: #e8f5e9;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2d5f3f;
+            border: 2px solid #4caf50;
+            width: 100%;
+            max-width: 120px;
+        }
+        .item-row .qty:focus {
+            outline: none;
+            border-color: #2d5f3f;
+            background: #c8e6c9;
+        }
+        .item-row .macros {
+            font-size: 0.95em;
+            color: #666;
+        }
+        
+        .total {
+            background: #e8f5e9;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .status {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .status div {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .good { background: #c8e6c9; color: #1b5e20; }
+        .warning { background: #fff9c4; color: #f57f17; }
+        .bad { background: #ffcdd2; color: #c62828; }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 25px rgba(76, 175, 80, 0.6);
+        }
+        .save-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            background: #c8e6c9;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+        
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            color: #c62828;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥗 RAHUL'S LEAN MUSCLE NUTRITION TRACKER</h1>
+            <p>Auto-Calculating Quantities | Google Sheets Integration | Daily Fresh Form</p>
+        </div>
+
+        <div class="date-section">
+            <div class="date-grid">
+                <div>
+                    <label>📅 Date:</label>
+                    <input type="date" id="date">
+                </div>
+                <div>
+                    <label>📊 Week Phase:</label>
+                    <select id="week" onchange="calculate()">
+                        <option value="1-2">Week 1-2 (2200 cal - Adaptation)</option>
+                        <option value="3-4" selected>Week 3-4 (2350 cal - Building)</option>
+                        <option value="5-6">Week 5-6 (2500 cal - Growth)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>📊 DAILY SUMMARY</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="label">Protein</div>
+                    <div class="value" id="daily-p">0g</div>
+                    <div class="target">Target: <span id="target-p">135g</span></div>
+                    <div id="status-p" style="font-size:1.5em; margin-top:5px;">⚪</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">Carbs</div>
+                    <div class="value" id="daily-c">0g</div>
+                    <div class="target">Target: <span id="target-c">325g</span></div>
+                    <div id="status-c" style="font-size:1.5em; margin-top:5px;">⚪</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">Calories</div>
+                    <div class="value" id="daily-cal">0</div>
+                    <div class="target">Target: <span id="target-cal">2350</span></div>
+                    <div id="status-cal" style="font-size:1.5em; margin-top:5px;">⚪</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BREAKFAST -->
+        <div class="meal">
+            <div class="meal-header">
+                <h3>🍳 BREAKFAST (8:30-9:00 AM)</h3>
+                <div class="target">Target: 30g Protein | 75g Carbs</div>
+            </div>
+            <div class="meal-body">
+                <div class="item">
+                    <div class="item-label">Choose Main Base (Poha/Oats/Idli/Upma/Dalia):</div>
+                    <div class="item-row">
+                        <select id="b1" onchange="calculate()">
+                            <option value="">-- Select --</option>
+                        </select>
+                        <input type="number" class="qty" id="b1-qty" value="0" min="0" step="5" onchange="rebalance('breakfast')">
+                        <div class="macros" id="b1-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Milk (200ml fixed):</div>
+                    <div class="item-row">
+                        <select id="b2" onchange="calculate()">
+                            <option value="">-- Select --</option>
+                            <option value="Milk" selected>Milk</option>
+                        </select>
+                        <input type="number" class="qty" id="b2-qty" value="200" min="0" step="10" onchange="rebalance('breakfast')">
+                        <div class="macros" id="b2-macros">P:7.0 C:10.0 F:3.0</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Fruit (Banana/Apple/Papaya/Orange):</div>
+                    <div class="item-row">
+                        <select id="b3" onchange="calculate()">
+                            <option value="">-- Select --</option>
+                        </select>
+                        <input type="number" class="qty" id="b3-qty" value="0" min="0" step="5" onchange="rebalance('breakfast')">
+                        <div class="macros" id="b3-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Nuts (Optional - Peanuts/Mixed Nuts/Almonds):</div>
+                    <div class="item-row">
+                        <select id="b4" onchange="calculate()">
+                            <option value="">-- Skip (Optional) --</option>
+                        </select>
+                        <input type="number" class="qty" id="b4-qty" value="0" min="0" step="5" onchange="rebalance('breakfast')">
+                        <div class="macros" id="b4-macros">-</div>
+                    </div>
+                </div>
+                <div class="total" id="b-total">TOTAL: Waiting for selection...</div>
+                <div class="status" id="b-status"></div>
+            </div>
+        </div>
+
+        <!-- LUNCH -->
+        <div class="meal">
+            <div class="meal-header">
+                <h3>🍛 LUNCH (1:30-2:00 PM) - BIGGEST MEAL</h3>
+                <div class="target">Target: 40g Protein | 110g Carbs</div>
+            </div>
+            <div class="meal-body">
+                <div class="item">
+                    <div class="item-label">Choose Grain (Rice/Roti/Jowar/Bajra/Quinoa):</div>
+                    <div class="item-row">
+                        <select id="l1" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="l1-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="l1-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Dal (Moong/Masoor/Toor/Chana/Rajma/Chole):</div>
+                    <div class="item-row">
+                        <select id="l2" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="l2-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="l2-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Protein (Paneer/Tofu/Soy Chunks):</div>
+                    <div class="item-row">
+                        <select id="l3" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="l3-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="l3-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Vegetables (120g fixed):</div>
+                    <div class="item-row">
+                        <select id="l4" onchange="calculate()">
+                            <option value="Mixed Vegetables" selected>Mixed Vegetables</option>
+                        </select>
+                        <input type="number" class="qty" id="l4-qty" value="120" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="l4-macros">P:1.9 C:7.9 F:0.2</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Curd (150g fixed):</div>
+                    <div class="item-row">
+                        <select id="l5" onchange="calculate()">
+                            <option value="Curd" selected>Curd</option>
+                        </select>
+                        <input type="number" class="qty" id="l5-qty" value="150" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="l5-macros">P:6.0 C:6.6 F:4.7</div>
+                    </div>
+                </div>
+                <div class="total" id="l-total">TOTAL: Waiting for selection...</div>
+                <div class="status" id="l-status"></div>
+            </div>
+        </div>
+
+        <!-- PRE-WORKOUT -->
+        <div class="meal">
+            <div class="meal-header" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);">
+                <h3>⚡ PRE-WORKOUT (4:45-5:00 PM)</h3>
+                <div class="target">Target: 30g CARBS ONLY - NO Protein/Fat!</div>
+            </div>
+            <div class="meal-body">
+                <div class="warning-box">⚠️ CARBS ONLY! NO protein, NO fats for best workout performance!</div>
+                <div class="item">
+                    <div class="item-label">Choose ONE Fast Carb:</div>
+                    <div class="item-row">
+                        <select id="pw1" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="pw1-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="pw1-macros">-</div>
+                    </div>
+                </div>
+                <div class="total" id="pw-total">TOTAL: Waiting for selection...</div>
+                <div id="pw-warning" style="display:none;" class="warning-box">
+                    ⚠️ WARNING: This contains protein/fat! Choose different option for best results!
+                </div>
+            </div>
+        </div>
+
+        <!-- POST-WORKOUT -->
+        <div class="meal">
+            <div class="meal-header">
+                <h3>🏋️ POST-WORKOUT (6:30-6:45 PM) - Within 15 min!</h3>
+                <div class="target">Target: 25g Protein | 25g Carbs</div>
+            </div>
+            <div class="meal-body">
+                <div class="item">
+                    <div class="item-label">Whey Protein (30g FIXED - 1 scoop):</div>
+                    <div class="item-row">
+                        <select id="po1" onchange="calculate()">
+                            <option value="Whey Protein" selected>Whey Protein</option>
+                        </select>
+                        <input type="number" class="qty" id="po1-qty" value="30" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="po1-macros">P:24.0 C:3.0 F:1.5</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Fast Carb (Banana/Dates/Raisins/Honey):</div>
+                    <div class="item-row">
+                        <select id="po2" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="po2-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="po2-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Creatine (5g daily - check if taken):</div>
+                    <input type="checkbox" id="creatine" style="width:30px; height:30px;">
+                    <label for="creatine"> ✓ Taken (5g)</label>
+                </div>
+                <div class="total" id="po-total">TOTAL: Waiting for selection...</div>
+                <div class="status" id="po-status"></div>
+            </div>
+        </div>
+
+        <!-- DINNER -->
+        <div class="meal">
+            <div class="meal-header">
+                <h3>🍽️ DINNER (8:15-9:00 PM)</h3>
+                <div class="target">Target: 30g Protein | 80g Carbs</div>
+            </div>
+            <div class="meal-body">
+                <div class="item">
+                    <div class="item-label">Choose Grain (Rice/Roti/Jowar/Bajra):</div>
+                    <div class="item-row">
+                        <select id="d1" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="d1-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="d1-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Dal (Moong/Masoor/Toor/Chana):</div>
+                    <div class="item-row">
+                        <select id="d2" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="d2-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="d2-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Choose Protein (Paneer/Tofu/Soy Chunks):</div>
+                    <div class="item-row">
+                        <select id="d3" onchange="calculate()"></select>
+                        <input type="number" class="qty" id="d3-qty" value="0" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="d3-macros">-</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-label">Vegetables (120g fixed):</div>
+                    <div class="item-row">
+                        <select id="d4" onchange="calculate()">
+                            <option value="Mixed Vegetables" selected>Mixed Vegetables</option>
+                        </select>
+                        <input type="number" class="qty" id="d4-qty" value="120" min="0" step="5" onchange="rebalance(this)">
+                        <div class="macros" id="d4-macros">P:1.9 C:7.9 F:0.2</div>
+                    </div>
+                </div>
+                <div class="total" id="d-total">TOTAL: Waiting for selection...</div>
+                <div class="status" id="d-status"></div>
+            </div>
+        </div>
+
+        <div class="message" id="final-message">
+            Select your foods to see daily nutrition summary
+        </div>
+
+        <button class="save-btn" id="save-btn" onclick="saveData()">
+            💾 SAVE TO GOOGLE SHEETS
+        </button>
+    </div>
+
+    <script src="food-database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
